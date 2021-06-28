@@ -24,15 +24,25 @@ def print_menu():
 1. Add matrices
 2. Multiply matrix by a constant
 3. Multiply matrices
+4. Transpose matrix
 0. Exit""")
 
-def read_command():
+def print_transpose_options():
+    print("""
+1. Main diagonal
+2. Side diagonal
+3. Vertical line
+4. Horizontal line""")
+
+
+
+def read_command(start=0, end=4):
     print("Your choise: ", end="" if JET_BRAINS_MODE else "> ")
     choise = input()
 
     if choise.isdigit():
         choise = int(choise)
-        if 0 <= choise <= 3:
+        if start <= choise <= end:
             return choise
     
     return -1
@@ -166,7 +176,21 @@ def multiply_matrices(a_matrix, b_matrix):
 
     return product_matrix
 
-    
+
+def transpose_matrix(transpose_type, matrix):
+    rows, cols = get_matrix_size(matrix)
+
+    if transpose_type == 4: return matrix[::-1]
+    elif transpose_type == 3: return [matrix[i][::-1] for i in range(rows)]
+
+    transposed_matrix = [[0 for j in range(rows)] for i in range(cols)] 
+        
+    for i in range(rows):              
+        for j in range(cols):            
+            if transpose_type == 1: transposed_matrix[j][i] = matrix[i][j]
+            elif transpose_type == 2: transposed_matrix[-j-1][-i-1] = matrix[i][j]
+
+    return transposed_matrix
 
 
 
@@ -228,6 +252,26 @@ def main():
             if product_matrix is not None:
                 print("The result is:")              
                 print_matrix(product_matrix)
+
+        elif command == 4:  # Transpose matrix
+            print_transpose_options()
+            while True:
+                transpose_type = read_command(1,4)
+                if transpose_type == -1: print("Error, invalid type")
+                else: break 
+                
+            rows, columns = read_matrix_size_safe()            
+            matrix = read_matrix(rows, columns) 
+
+            transposed_matrix = transpose_matrix(transpose_type, matrix)
+
+            if transposed_matrix is not None:
+                print("The result is:")              
+                print_matrix(transposed_matrix)
+
+
+
+
             
 
 
