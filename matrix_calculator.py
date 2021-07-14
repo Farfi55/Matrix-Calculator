@@ -26,6 +26,7 @@ def print_menu():
 3. Multiply matrices
 4. Transpose matrix
 5. Calculate a determinant
+6. Inverse matrix
 0. Exit""")
 
 def print_transpose_options():
@@ -37,7 +38,7 @@ def print_transpose_options():
 
 
 
-def read_command(start=0, end=5):
+def read_command(start=0, end=6):
     print("Your choise: ", end="" if JET_BRAINS_MODE else "> ")
     choise = input()
 
@@ -66,6 +67,13 @@ def read_matrix_size_safe(matrix_name=""):
 
         print("Error, size not valid")
 
+def read_square_matrix_size_safe(matrix_name=""):
+    while True:
+        n,m = read_matrix_size(matrix_name)
+        if n > 0 and n == m:
+            return n, m
+
+        print("Error, size not valid, rows and columns must be the same")
     
 
 
@@ -178,7 +186,7 @@ def multiply_matrices(a_matrix, b_matrix):
     return product_matrix
 
 
-def transpose_matrix(transpose_type, matrix):
+def transpose_matrix(matrix, transpose_type=1):
     rows, cols = get_matrix_size(matrix)
 
     if transpose_type == 4: return matrix[::-1]
@@ -291,20 +299,39 @@ def main():
             rows, columns = read_matrix_size_safe()            
             matrix = read_matrix(rows, columns) 
 
-            transposed_matrix = transpose_matrix(transpose_type, matrix)
+            transposed_matrix = transpose_matrix(matrix, transpose_type)
 
             if transposed_matrix is not None:
                 print("The result is:")              
                 print_matrix(transposed_matrix)
 
         elif command == 5:
-            rows, columns = read_matrix_size_safe()            
+            rows, columns = read_square_matrix_size_safe()            
             matrix = read_matrix(rows, columns) 
 
             determinant = det(matrix)
             if determinant is not None:
                 print("The result is:")              
                 print(determinant)
+        
+        elif command == 6:
+            rows, columns = read_square_matrix_size_safe()            
+
+
+            matrix = read_matrix(rows, columns) 
+            
+            determinant = det(matrix)
+            if determinant == 0:
+                print("This matrix doesn't have an inverse.")
+                continue
+
+            cofactor_matrix = [[ det(minor(matrix, i, j)) * (-1 if (i+j)%2 else 1) for j in range(columns) ] for i in range(rows)]
+
+            transposed_matrix = transpose_matrix(cofactor_matrix)
+            inverse_matrix = scale_matrix(1 / determinant, transposed_matrix) 
+            
+            print("The result is:")              
+            print_matrix(inverse_matrix)
 
 
         else:
