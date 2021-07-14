@@ -25,6 +25,7 @@ def print_menu():
 2. Multiply matrix by a constant
 3. Multiply matrices
 4. Transpose matrix
+5. Calculate a determinant
 0. Exit""")
 
 def print_transpose_options():
@@ -36,7 +37,7 @@ def print_transpose_options():
 
 
 
-def read_command(start=0, end=4):
+def read_command(start=0, end=5):
     print("Your choise: ", end="" if JET_BRAINS_MODE else "> ")
     choise = input()
 
@@ -194,6 +195,33 @@ def transpose_matrix(transpose_type, matrix):
 
 
 
+def minor(matrix, i, j):
+    rows, cols = get_matrix_size(matrix)
+    minor = [[matrix[row][col] for col in range(cols) if col != j] for row in range(rows) if row != i]
+    return minor
+
+
+def cofactor(matrix, i, j):
+    if (i+j)%2: return -matrix[i][j]
+    else:       return  matrix[i][j]
+
+
+def det(matrix):
+    rows, cols = get_matrix_size(matrix)
+
+    if rows == 0 or rows != cols:
+        return None
+    
+    if rows == 1:
+        return matrix[0][0]
+    elif rows == 2:
+        return matrix[0][0] * matrix[1][1] - matrix[0][1] * matrix[1][0]
+    else:
+        # can be optimized much more
+        return sum( cofactor(matrix,0,j) * det(minor(matrix, 0,j)) for j in range(cols))
+
+
+
 
 def main():
     command = None
@@ -269,10 +297,14 @@ def main():
                 print("The result is:")              
                 print_matrix(transposed_matrix)
 
+        elif command == 5:
+            rows, columns = read_matrix_size_safe()            
+            matrix = read_matrix(rows, columns) 
 
-
-
-            
+            determinant = det(matrix)
+            if determinant is not None:
+                print("The result is:")              
+                print(determinant)
 
 
         else:
